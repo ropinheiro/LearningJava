@@ -8,7 +8,7 @@ public class Main {
 
     private static JFrame createGUI() {
         // Prepare Frame and Panel
-        JFrame frame = new JFrame("Titlecase Converter App");
+        JFrame frame = new JFrame("Title Case Converter App");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         JPanel panel = new JPanel();
         frame.add(panel);
@@ -30,9 +30,10 @@ public class Main {
         output.setVisible(true);
         panel.add(output);
 
-        // By clicking Button, copy TextField's contents to the Label
+        // By clicking Button, we convert TextField contents to a TitleCase capitalization.
+        // The output will be put in the Label.
         convertButton.addActionListener(event -> {
-            output.setText(input.getText());
+            output.setText(Converter.ToTitleCase(input.getText()));
         });
 
         // Pack contents in Frame and show them
