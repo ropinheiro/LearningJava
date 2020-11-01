@@ -1,3 +1,5 @@
+package com.rpinheiro;
+
 import javax.swing.*;
 import java.awt.*;
 

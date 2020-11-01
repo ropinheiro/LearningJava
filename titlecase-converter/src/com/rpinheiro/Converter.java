@@ -1,3 +1,5 @@
+package com.rpinheiro;
+
 public class Converter {
 
     // Converts a sentence to a Title Case
