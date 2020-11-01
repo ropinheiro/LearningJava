@@ -7,28 +7,27 @@ public class Main {
     }
 
     private static JFrame createGUI() {
-        // Prepare Frame and Panel
+        // Prepare Frame and layouy
         JFrame frame = new JFrame("Title Case Converter App");
+        frame.setLayout(new FlowLayout());
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        JPanel panel = new JPanel();
-        frame.add(panel);
 
         // Create the Input TextField
         JTextField input = new JTextField();
         input.setPreferredSize(new Dimension(300, 40));
         input.setVisible(true);
-        panel.add(input);
+        frame.add(input);
 
         // Create the Button
         JButton convertButton = new JButton("Convert");
         convertButton.setVisible(true);
-        panel.add(convertButton);
+        frame.add(convertButton);
 
         // Crate the Output Label
         JLabel output = new JLabel();
         output.setPreferredSize(new Dimension(300,40));
         output.setVisible(true);
-        panel.add(output);
+        frame.add(output);
 
         // By clicking Button, we convert TextField contents to a TitleCase capitalization.
         // The output will be put in the Label.
@@ -38,7 +37,7 @@ public class Main {
 
         // Pack contents in Frame and show them
         frame.pack();
-        panel.setVisible(true);
+        frame.setLocationRelativeTo(null); // Center frame in the screen
         frame.setVisible(true);
         return frame;
     }
