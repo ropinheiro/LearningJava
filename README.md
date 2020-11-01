@@ -19,7 +19,10 @@ Desktop App that converts some input text to a Title Case format.
 
 Based on learnings from https://app.pluralsight.com/library/courses/setting-up-java-development-environment
 
-Generate the jar file by opening a console in the src folder and executing:
+When you build in IntelliJ, the jar file is generated in
 
-> jar cfv TitlecaseConverter.jar -C com\rpinheiro .
+> \out\artifacts\titlecase_converter_jar
 
+Execute it by opening a Command Prompt, going to that folder and running:
+
+> java -jar titlecase-converter.jar
