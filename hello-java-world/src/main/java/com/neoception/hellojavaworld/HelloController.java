@@ -8,6 +8,7 @@ public class HelloController {
 
     @RequestMapping("/")
     public String index() {
-        return "Hello Java World! About to conquer Kafka World in some moments...";
+        return "Hello Java World! Result: "
+                + KafkaUtils.SendMessages();
     }
 }
