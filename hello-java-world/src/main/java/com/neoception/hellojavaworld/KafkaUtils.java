@@ -1,14 +1,22 @@
 package com.neoception.hellojavaworld;
 
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.*;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.util.Arrays;
 import java.util.Properties;
 
 public class KafkaUtils {
+
+    public final static String topic = "PUT HERE TOPIC";
+    public final static String groupId = "PUT HERE GROUP ID";
+
+    public final static Integer messageCount = 10;
 
     public static Properties LoadConfig(final String configFile) {
         if (!Files.exists(Paths.get(configFile))) {
@@ -33,8 +41,6 @@ public class KafkaUtils {
         if( props == null ) {
             return "Unable to load configurations!";
         }
-        // Define tropic
-        final String topic = "PUT HERE TOPIC";
 
         // Add additional properties.
         props.put(ProducerConfig.ACKS_CONFIG, "all");
@@ -45,13 +51,12 @@ public class KafkaUtils {
         Producer<String, String> producer = new KafkaProducer<>(props);
 
         // Send some data
-        final Long numMessages = 10L;
-        final String[] result = {String.format("Topic: %s%nData:%n", topic)};
-        for (Long i = 0L; i < numMessages; i++) {
+        final String[] result = {String.format("Writing to Topic: %s%nData:%n", topic)};
+        for (Long i = 0L; i < messageCount; i++) {
             String key = "neo";
             String record = "some_value_" + i.toString();
 
-            producer.send(new ProducerRecord<String, String>(topic, key, record), (m, e) -> {
+            producer.send(new ProducerRecord<>(topic, key, record), (m, e) -> {
                 result[0] += String.format("| %s: %s -> ", key, record);
                 if (e != null) {
                     result[0] += "error%n";
@@ -67,6 +72,40 @@ public class KafkaUtils {
     }
 
     public static String ReadMessages() {
-        return "TODO";
+        // Load properties from a local configuration file
+        final Properties props = LoadConfig("src/java.config");
+
+        // Add additional properties.
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        // Create a Consumer
+        final Consumer<String, String> consumer =
+                new KafkaConsumer<>(props);
+        consumer.subscribe(Arrays.asList(topic));
+
+        // Read data
+        final String[] result = {String.format("Reading from Topic: %s%nData:%n", topic)};
+        try {
+            Boolean hasMessages = false;
+            do {
+                hasMessages = false;
+                ConsumerRecords<String, String> records =
+                        consumer.poll(Duration.ofSeconds(5));
+                result[0] += String.format("|------------------------%n");
+                for (ConsumerRecord<String, String> record : records) {
+                    hasMessages = true;
+                    String key = record.key();
+                    String value = record.value();
+                    result[0] += String.format("| %s: %s%n", key, value);
+                }
+            } while (hasMessages);
+        } finally {
+            consumer.close();
+        }
+
+        return result[0];
     }
 }

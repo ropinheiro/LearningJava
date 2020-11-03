@@ -10,6 +10,9 @@ public class HelloController {
     public String index() {
         return String.format("Hello Java and Kafka Worlds!%n")
                 + String.format("Sending data to Kafka...%n")
-                + KafkaUtils.SendMessages();
+                + KafkaUtils.SendMessages()
+                + String.format("==============================================%n")
+                + String.format("Receiving data from Kafka...%n")
+                + KafkaUtils.ReadMessages();
     }
 }
