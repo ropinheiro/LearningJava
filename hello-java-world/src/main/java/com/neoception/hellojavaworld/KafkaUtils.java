@@ -10,6 +10,22 @@ import java.util.Properties;
 
 public class KafkaUtils {
 
+    public static Properties LoadConfig(final String configFile) {
+        if (!Files.exists(Paths.get(configFile))) {
+            // TODO: handle this
+            return null;
+        }
+        final Properties cfg = new Properties();
+        try (InputStream inputStream = new FileInputStream(configFile)) {
+            cfg.load(inputStream);
+        }
+        catch (Exception exception){
+            // TODO: handle this
+            return null;
+        }
+        return cfg;
+    }
+
     public static String SendMessages() {
         // Load properties from a local configuration file
         final Properties props = LoadConfig("src/java.config");
@@ -50,20 +66,7 @@ public class KafkaUtils {
         return result[0];
     }
 
-
-    public static Properties LoadConfig(final String configFile) {
-        if (!Files.exists(Paths.get(configFile))) {
-            // TODO: handle this
-            return null;
-        }
-        final Properties cfg = new Properties();
-        try (InputStream inputStream = new FileInputStream(configFile)) {
-            cfg.load(inputStream);
-        }
-        catch (Exception exception){
-            // TODO: handle this
-            return null;
-        }
-        return cfg;
+    public static String ReadMessages() {
+        return "TODO";
     }
 }
