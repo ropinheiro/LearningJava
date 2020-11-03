@@ -7,11 +7,13 @@ TODO: describe
 
 ## hello-java-world
 
-Web App that actually returns Hello World string.
+Web App returning Hello World string.
 
 Based on learnings from https://spring.io/guides/gs/spring-boot/#scratch
 
-Actually being changed to include producers and consumers for a Kafka cluster.
+It was extended to produce/consume messages to/from a topic in a Kafka cluster.
+
+Based on code from https://github.com/confluentinc/examples/tree/6.0.0-post/clients/cloud/java/src/main/java/io/confluent/examples/clients/cloud
 
 ## titlecase-converter
 
