@@ -5,6 +5,12 @@ Dump place for my projects where I'm learning JAVA
 
 TODO: describe
 
+## env-demo
+
+Playing around with environment variables
+
+Based on learnings from http://zetcode.com/springboot/environment/
+
 ## hello-java-world
 
 Web App returning Hello World string.
