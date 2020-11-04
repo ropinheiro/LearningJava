@@ -13,11 +13,6 @@ import java.util.Properties;
 
 public class KafkaUtils {
 
-    public final static String topic = "PUT HERE TOPIC";
-    public final static String groupId = "PUT HERE GROUP ID";
-
-    public final static Integer messageCount = 10;
-
     public static Properties LoadConfig(final String configFile) {
         if (!Files.exists(Paths.get(configFile))) {
             // TODO: handle this
@@ -34,12 +29,15 @@ public class KafkaUtils {
         return cfg;
     }
 
-    public static String SendMessages() {
+    public static String SendMessages(String topic, Integer messageCount) {
+        if( topic == null ) {
+            return "Topic cannot be null!%n";
+        }
+
         // Load properties from a local configuration file
         final Properties props = LoadConfig("src/java.config");
-
         if( props == null ) {
-            return "Unable to load configurations!";
+            return "Unable to load configurations!%n";
         }
 
         // Add additional properties.
@@ -71,9 +69,19 @@ public class KafkaUtils {
         return result[0];
     }
 
-    public static String ReadMessages() {
+    public static String ReadMessages(String topic, String groupId, Integer messageCount) {
+        if( topic == null ) {
+            return "Topic cannot be null!%n";
+        }
+        if( groupId == null ) {
+            return "GroupId cannot be null!%n";
+        }
+
         // Load properties from a local configuration file
         final Properties props = LoadConfig("src/java.config");
+        if( props == null ) {
+            return "Unable to load configurations!%n";
+        }
 
         // Add additional properties.
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
