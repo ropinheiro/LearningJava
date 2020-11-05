@@ -1,5 +1,7 @@
 package com.neoception.hellojavaworld;
 
+import org.springframework.core.env.Environment;
+
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.*;
 
@@ -29,7 +31,10 @@ public class KafkaUtils {
         return cfg;
     }
 
-    public static String SendMessages(String topic, Integer messageCount) {
+    public static String SendMessages(Environment env) {
+        String topic = env.getProperty("kafka.topic");
+        Integer messageCount = Integer.parseInt( env.getProperty("kafka.messageCount") );
+
         if( topic == null ) {
             return "Topic cannot be null!%n";
         }
@@ -69,7 +74,10 @@ public class KafkaUtils {
         return result[0];
     }
 
-    public static String ReadMessages(String topic, String groupId, Integer messageCount) {
+    public static String ReadMessages(Environment env) {
+        String topic = env.getProperty("kafka.topic");
+        String groupId = env.getProperty("kafka.groupId");
+
         if( topic == null ) {
             return "Topic cannot be null!%n";
         }
