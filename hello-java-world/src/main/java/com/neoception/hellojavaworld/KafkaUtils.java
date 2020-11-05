@@ -4,12 +4,7 @@ import org.springframework.core.env.Environment;
 
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.*;
-import org.springframework.expression.spel.ast.PropertyOrFieldReference;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
