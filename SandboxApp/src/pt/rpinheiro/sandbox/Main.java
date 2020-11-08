@@ -1,4 +1,4 @@
-package com.rpinheiro;
+package pt.rpinheiro.sandbox;
 
 public class Main {
 
