@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  hello-java-world:
+    image: hello-java-world
+    ports:
+    - 8081:9000
+    env_file:
+      - dev.env
