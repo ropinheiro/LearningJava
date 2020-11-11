@@ -27,6 +27,11 @@ public class HelloController {
 
     @PostMapping("/newMessage")
     public String newMessage(@RequestBody String message) {
-        return "Got a message: " + message;
+        return String.format("Hello POST World!%n")
+                + String.format("Sending data to Kafka...%n")
+                + KafkaUtils.SendMessage(env, message)
+                + String.format("==============================================%n")
+                + String.format("Receiving data from Kafka...%n")
+                + KafkaUtils.ReadMessages(env);
     }
 }

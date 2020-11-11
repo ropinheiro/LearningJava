@@ -34,6 +34,34 @@ public class KafkaUtils {
         return props;
     }
 
+    public static String SendMessage(Environment env, String message) {
+        String topic = env.getProperty("kafka.topic");
+        if( topic == null ) {
+            return "Topic cannot be null!%n";
+        }
+
+        // Configure Kafka properties.
+        final Properties props = LoadConfig(env);
+
+        // Create a Producer
+        Producer<String, String> producer = new KafkaProducer<>(props);
+
+        // Send the message
+        final String[] result = {String.format("Writing to Topic: %s%nData:%n", topic)};
+        producer.send(new ProducerRecord<>(topic, "neo", message), (m, e) -> {
+            result[0] += String.format("| %s: %s -> ", "neo", message);
+            if (e != null) {
+                result[0] += "error%n";
+            } else {
+                result[0] += String.format("partition: [%d] @ offset %d%n", m.partition(), m.offset());
+            }
+        });
+
+        producer.flush();
+        producer.close();
+        return result[0];
+    }
+
     public static String SendMessages(Environment env) {
         String topic = env.getProperty("kafka.topic");
         Integer messageCount = Integer.parseInt( env.getProperty("kafka.messageCount") );
