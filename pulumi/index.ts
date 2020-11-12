@@ -10,6 +10,9 @@ const account = new azure.storage.Account("storage", {
     resourceGroupName: resourceGroup.name,
     accountTier: "Standard",
     accountReplicationType: "LRS",
+    tags: {
+        "Environment": "Dev",
+    },
 });
 
 // Export the connection string for the storage account
