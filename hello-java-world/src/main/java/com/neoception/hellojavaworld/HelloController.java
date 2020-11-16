@@ -18,6 +18,13 @@ public class HelloController {
     @RequestMapping("/")
     public String index() {
         return String.format("Hello Java and Kafka Worlds!%n")
+                + String.format("Call /newMessage with a message in the body!%n");
+    }
+
+    // Send and receive messages to Kafka topics using Apache Kafka libs
+    @RequestMapping("/kafkaWithApacheLibs")
+    public String kafkaWithApacheLibs() {
+        return String.format("Hello Java and Kafka Worlds!%n")
                 + String.format("Sending data to Kafka...%n")
                 + KafkaUtils.SendMessages(env)
                 + String.format("==============================================%n")
