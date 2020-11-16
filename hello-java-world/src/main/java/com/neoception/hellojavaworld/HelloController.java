@@ -28,11 +28,11 @@ public class HelloController {
     // Send and receive messages to Kafka topics using Apache Kafka libs
     @RequestMapping("/kafkaWithApacheLibs")
     public String kafkaWithApacheLibs() {
-        return String.format("Hello Java and Kafka Worlds!%n")
-                + String.format("Sending data to Kafka...%n")
+        return OutputUtils.ReturnToIndex()
+                + OutputUtils.Line("Sending data to Kafka...")
                 + KafkaUtils.SendMessages(env)
-                + String.format("==============================================%n")
-                + String.format("Receiving data from Kafka...%n")
+                + OutputUtils.Line(OutputUtils.Bar)
+                + OutputUtils.Line("Receiving data from Kafka...")
                 + KafkaUtils.ReadMessages(env);
     }
 
