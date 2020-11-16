@@ -17,8 +17,12 @@ public class HelloController {
 
     @RequestMapping("/")
     public String index() {
-        return String.format("Hello Java and Kafka Worlds!%n")
-                + String.format("Call /newMessage with a message in the body!%n");
+        return OutputUtils.Index();
+    }
+
+    @RequestMapping("/ping")
+    public String ping() {
+        return OutputUtils.PlainTextAnswer("PONG!");
     }
 
     // Send and receive messages to Kafka topics using Apache Kafka libs
