@@ -14,16 +14,23 @@ public class HelloController {
     public HelloController(Environment env) {
         this.env = env;
     }
+    private final KafkaUtils utils;
 
+    // Shows an index with the available options
     @RequestMapping("/")
     public String index() {
         return OutputUtils.Index();
     }
 
+    // Just a ping to validate basic request/response is working
     @RequestMapping("/ping")
     public String ping() {
         return OutputUtils.PlainTextAnswer("PONG!");
     }
+
+    // ====================================================================
+    // Methods using Apache Kafka libs and Environment
+    // ====================================================================
 
     // Send and receive messages to Kafka topics using Apache Kafka libs
     @RequestMapping("/kafkaWithApacheLibs")
@@ -36,13 +43,19 @@ public class HelloController {
                 + KafkaUtils.ReadMessages(env);
     }
 
-    @PostMapping("/newMessage")
-    public String newMessage(@RequestBody String message) {
+    // To be used with Postman: post something.
+    @PostMapping("/postWithApacheLibs")
+    public String postWithApacheLibs(@RequestBody String message) {
         return String.format("Hello POST World!%n")
                 + String.format("Sending data to Kafka...%n")
-                + KafkaUtils.SendMessage(env, message)
+                + utils.SendMessage(env, message)
                 + String.format("==============================================%n")
                 + String.format("Receiving data from Kafka...%n")
                 + KafkaUtils.ReadMessages(env);
     }
+
+    // ====================================================================
+    // Methods using only Java Spring Kafka libs
+    // ====================================================================
+
 }

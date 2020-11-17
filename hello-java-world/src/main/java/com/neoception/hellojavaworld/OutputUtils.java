@@ -12,6 +12,10 @@ public class OutputUtils {
                 + String.format("<li><a href='/ping'>Ping!</a></li>")
                 + String.format("<li><a href='/kafkaWithApacheLibs'>Kafka with Apache libs</a></li>")
                 + String.format("</ul>")
+                + String.format("<p>&nbsp;&nbsp;Others:</p>")
+                + String.format("<ul>")
+                + String.format("<li>Use Postman with /postWithApacheLibs with a one-line plain text in the body to send a custom string to a Kafka topic using Apache Kafka libs.</li>")
+                + String.format("</ul>")
                 + String.format("<p>%s<p/>", Bar)
                 + String.format("</body>");
     }

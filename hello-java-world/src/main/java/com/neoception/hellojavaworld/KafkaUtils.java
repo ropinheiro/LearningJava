@@ -11,6 +11,9 @@ import java.util.Properties;
 
 public class KafkaUtils {
 
+    // ====================================================================
+    // Methods using Apache Kafka libs and Environment
+    // ====================================================================
     public static Properties LoadConfig(Environment env) {
         Properties props = new Properties();
 
@@ -35,6 +38,7 @@ public class KafkaUtils {
     }
 
     public static String SendMessage(Environment env, String message) {
+
         String topic = env.getProperty("kafka.topic");
         if( topic == null ) {
             return "Topic cannot be null!%n";
@@ -67,7 +71,7 @@ public class KafkaUtils {
         Integer messageCount = Integer.parseInt( env.getProperty("kafka.messageCount") );
 
         if( topic == null ) {
-            return "Topic cannot be null!%n";
+            return OutputUtils.Line("Topic cannot be null!");
         }
 
         // Configure Kafka properties.
@@ -77,7 +81,7 @@ public class KafkaUtils {
         Producer<String, String> producer = new KafkaProducer<>(props);
 
         // Send some data
-        final String[] result = {String.format("Writing to Topic: %s%nData:%n", topic)};
+        final String[] result = {OutputUtils.Line(String.format("Writing to Topic: %s<br/>Data:", topic))};
         for (Long i = 0L; i < messageCount; i++) {
             String key = "neo";
             String record = "some_value_" + i.toString();
@@ -87,7 +91,7 @@ public class KafkaUtils {
                 if (e != null) {
                     result[0] += "error%n";
                 } else {
-                    result[0] += String.format("partition: [%d] @ offset %d%n", m.partition(), m.offset());
+                    result[0] += OutputUtils.Line(String.format("partition: [%d] @ offset %d", m.partition(), m.offset()));
                 }
             });
         }
@@ -100,7 +104,7 @@ public class KafkaUtils {
     public static String ReadMessages(Environment env) {
         String topic = env.getProperty("kafka.topic");
         if( topic == null ) {
-            return "Topic cannot be null!%n";
+            return OutputUtils.Line("Topic cannot be null!");
         }
 
         // Configure Kafka properties.
@@ -112,19 +116,19 @@ public class KafkaUtils {
         consumer.subscribe(Arrays.asList(topic));
 
         // Read data
-        final String[] result = {String.format("Reading from Topic: %s%nData:%n", topic)};
+        final String[] result = {OutputUtils.Line(String.format("Reading from Topic: %s<br/>Data:", topic))};
         try {
             Boolean hasMessages = false;
             do {
                 hasMessages = false;
                 ConsumerRecords<String, String> records =
                         consumer.poll(Duration.ofSeconds(5));
-                result[0] += String.format("|------------------------%n");
+                result[0] += OutputUtils.Line("|------------------------");
                 for (ConsumerRecord<String, String> record : records) {
                     hasMessages = true;
                     String key = record.key();
                     String value = record.value();
-                    result[0] += String.format("| %s: %s%n", key, value);
+                    result[0] += OutputUtils.Line(String.format("| %s: %s", key, value));
                 }
             } while (hasMessages);
         } finally {
