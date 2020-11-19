@@ -1,15 +1,26 @@
 package com.neoception.hellojavaworld;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.*;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
 
+@RequiredArgsConstructor
+@Component
 public class KafkaUtils {
+
+    @Value("${KAFKA_TOPIC}")
+    String topic;
+
+    private final KafkaProducerConfig configs;
 
     // ====================================================================
     // Methods using Apache Kafka libs and Environment
@@ -137,4 +148,30 @@ public class KafkaUtils {
 
         return result[0];
     }
+
+    // ====================================================================
+    // Methods using only Java Spring Kafka libs
+    // ====================================================================
+    public String SendMessage(String message) {
+
+        KafkaTemplate<String, String> kafkaTemplate =
+                configs.kafkaTemplate();
+
+        // Send the message
+        final String[] result = {
+                OutputUtils.Line(String.format("Writing to Topic: %s", topic))
+                        + OutputUtils.Line("Data:")
+        };
+        result[0] += String.format("| %s: %s -> ", "neo", message);
+        try {
+            kafkaTemplate.send(topic, "neo", message);
+            result[0] += OutputUtils.Line("success!");
+        } catch (Exception ex) {
+            result[0] += OutputUtils.Line("error!");
+        }
+        kafkaTemplate.flush();
+
+        return result[0];
+    }
+
 }

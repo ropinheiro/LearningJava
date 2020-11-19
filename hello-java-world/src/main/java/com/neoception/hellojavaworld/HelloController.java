@@ -1,19 +1,18 @@
 package com.neoception.hellojavaworld;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+@RequiredArgsConstructor
 @RestController
 public class HelloController {
 
     private final Environment env;
 
-    public HelloController(Environment env) {
-        this.env = env;
-    }
     private final KafkaUtils utils;
 
     // Shows an index with the available options
@@ -57,5 +56,23 @@ public class HelloController {
     // ====================================================================
     // Methods using only Java Spring Kafka libs
     // ====================================================================
+    @RequestMapping("/kafkaWithSpringLibs")
+    public String kafkaWithSpringLibs() {
+        return OutputUtils.ReturnToIndex()
+                + useSpringLibs( "Using Java Spring Kafka libs", "123");
+    }
+
+    // To be used with Postman: post something.
+    @PostMapping("/postWithSpringLibs")
+    public String postWithSpringLibs(@RequestBody String message) {
+        return OutputUtils.UseNewLinesInsteadOfHtmlBreaks(
+                useSpringLibs( "Hello POST World!", message));
+    }
+
+    private String useSpringLibs(String title, String message) {
+        return OutputUtils.Line(title)
+                + OutputUtils.Line("Sending data to Kafka...")
+                + utils.SendMessage(message);
+    }
 
 }

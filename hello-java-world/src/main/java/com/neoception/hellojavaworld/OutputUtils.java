@@ -11,6 +11,7 @@ public class OutputUtils {
                 + String.format("<ul>")
                 + String.format("<li><a href='/ping'>Ping!</a></li>")
                 + String.format("<li><a href='/kafkaWithApacheLibs'>Kafka with Apache libs</a></li>")
+                + String.format("<li><a href='/kafkaWithSpringLibs'>Kafka with Java Spring libs</a></li>")
                 + String.format("</ul>")
                 + String.format("<p>&nbsp;&nbsp;Others:</p>")
                 + String.format("<ul>")
@@ -39,5 +40,9 @@ public class OutputUtils {
 
     public static String Line( String text ) {
         return String.format("%s<br/>", text);
+    }
+
+    public static String UseNewLinesInsteadOfHtmlBreaks( String text )  {
+        return text.replace( "<br/>", "\n");
     }
 }
