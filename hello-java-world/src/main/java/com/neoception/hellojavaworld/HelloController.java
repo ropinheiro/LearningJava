@@ -35,21 +35,22 @@ public class HelloController {
     @RequestMapping("/kafkaWithApacheLibs")
     public String kafkaWithApacheLibs() {
         return OutputUtils.ReturnToIndex()
-                + OutputUtils.Line("Sending data to Kafka...")
-                + KafkaUtils.SendMessages(env)
-                + OutputUtils.Line(OutputUtils.Bar)
-                + OutputUtils.Line("Receiving data from Kafka...")
-                + KafkaUtils.ReadMessages(env);
+                + useApacheLibs("Using Apache Kafka libs", "123" );
     }
 
     // To be used with Postman: post something.
     @PostMapping("/postWithApacheLibs")
     public String postWithApacheLibs(@RequestBody String message) {
-        return String.format("Hello POST World!%n")
-                + String.format("Sending data to Kafka...%n")
-                + utils.SendMessage(env, message)
-                + String.format("==============================================%n")
-                + String.format("Receiving data from Kafka...%n")
+        return OutputUtils.UseNewLinesInsteadOfHtmlBreaks(
+                useApacheLibs("Hello POST World!", message));
+    }
+
+    private String useApacheLibs(String title, String message) {
+        return OutputUtils.Line(title)
+                + OutputUtils.Line("Sending data to Kafka...")
+                + KafkaUtils.SendMessage(env, message)
+                + OutputUtils.Line(OutputUtils.Bar)
+                + OutputUtils.Line("Receiving data from Kafka...")
                 + KafkaUtils.ReadMessages(env);
     }
 

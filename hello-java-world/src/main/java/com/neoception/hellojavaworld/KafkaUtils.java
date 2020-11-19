@@ -29,30 +29,30 @@ public class KafkaUtils {
         Properties props = new Properties();
 
         // General
-        props.put("bootstrap.servers", env.getProperty("bootstrap.servers"));
-        props.put("security.protocol", env.getProperty("security.protocol"));
-        props.put("sasl.jaas.config", env.getProperty("sasl.jaas.config"));
-        props.put("sasl.mechanism", env.getProperty("sasl.mechanism"));
+        props.put("sasl.mechanism", env.getProperty("kafka.properties.sasl.mechanism"));
+        props.put("security.protocol", env.getProperty("kafka.properties.security.protocol"));
+        props.put("bootstrap.servers", env.getProperty("SPRING_KAFKA_BOOTSTRAP_SERVERS"));
+        props.put("sasl.jaas.config", env.getProperty("SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG"));
 
-        // For Producer
-        props.put(ProducerConfig.ACKS_CONFIG, "all");
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+        // For Producer, from dev.env
+        props.put(ProducerConfig.ACKS_CONFIG, env.getProperty("SPRING_KAFKA_ACKS_CONFIG"));
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, env.getProperty("SPRING_KAFKA_KEY_SERIALIZER_CLASS_CONFIG"));
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, env.getProperty("SPRING_KAFKA_VALUE_SERIALIZER_CLASS_CONFIG"));
 
-        // For Consumer
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, env.getProperty("kafka.groupId"));
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        // For Consumer, from dev.env
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, env.getProperty("kafka.properties.auto.offset.reset.config"));
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, env.getProperty("SPRING_KAFKA_KEY_DESERIALIZER_CLASS_CONFIG"));
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, env.getProperty("SPRING_KAFKA_VALUE_DESERIALIZER_CLASS_CONFIG"));
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, env.getProperty("SPRING_KAFKA_CONSUMER_GROUP_ID"));
 
         return props;
     }
 
     public static String SendMessage(Environment env, String message) {
 
-        String topic = env.getProperty("kafka.topic");
-        if( topic == null ) {
-            return "Topic cannot be null!%n";
+        String topic = env.getProperty("KAFKA_TOPIC");
+        if (topic == null) {
+            return "Topic cannot be null!<br/>";
         }
 
         // Configure Kafka properties.
@@ -62,13 +62,18 @@ public class KafkaUtils {
         Producer<String, String> producer = new KafkaProducer<>(props);
 
         // Send the message
-        final String[] result = {String.format("Writing to Topic: %s%nData:%n", topic)};
+        final String[] result = {
+                OutputUtils.Line(String.format("Writing to Topic: %s", topic))
+                        + OutputUtils.Line("Data:")
+        };
+
         producer.send(new ProducerRecord<>(topic, "neo", message), (m, e) -> {
             result[0] += String.format("| %s: %s -> ", "neo", message);
             if (e != null) {
-                result[0] += "error%n";
+                result[0] += OutputUtils.Line("error");
             } else {
-                result[0] += String.format("partition: [%d] @ offset %d%n", m.partition(), m.offset());
+                result[0] += OutputUtils.Line(
+                        String.format("partition: [%d] @ offset %d", m.partition(), m.offset()));
             }
         });
 
@@ -77,44 +82,9 @@ public class KafkaUtils {
         return result[0];
     }
 
-    public static String SendMessages(Environment env) {
-        String topic = env.getProperty("kafka.topic");
-        Integer messageCount = Integer.parseInt( env.getProperty("kafka.messageCount") );
-
-        if( topic == null ) {
-            return OutputUtils.Line("Topic cannot be null!");
-        }
-
-        // Configure Kafka properties.
-        final Properties props = LoadConfig(env);
-
-        // Create a Producer
-        Producer<String, String> producer = new KafkaProducer<>(props);
-
-        // Send some data
-        final String[] result = {OutputUtils.Line(String.format("Writing to Topic: %s<br/>Data:", topic))};
-        for (Long i = 0L; i < messageCount; i++) {
-            String key = "neo";
-            String record = "some_value_" + i.toString();
-
-            producer.send(new ProducerRecord<>(topic, key, record), (m, e) -> {
-                result[0] += String.format("| %s: %s -> ", key, record);
-                if (e != null) {
-                    result[0] += "error%n";
-                } else {
-                    result[0] += OutputUtils.Line(String.format("partition: [%d] @ offset %d", m.partition(), m.offset()));
-                }
-            });
-        }
-
-        producer.flush();
-        producer.close();
-        return result[0];
-    }
-
     public static String ReadMessages(Environment env) {
-        String topic = env.getProperty("kafka.topic");
-        if( topic == null ) {
+        String topic = env.getProperty("KAFKA_TOPIC");
+        if (topic == null) {
             return OutputUtils.Line("Topic cannot be null!");
         }
 
@@ -127,7 +97,10 @@ public class KafkaUtils {
         consumer.subscribe(Arrays.asList(topic));
 
         // Read data
-        final String[] result = {OutputUtils.Line(String.format("Reading from Topic: %s<br/>Data:", topic))};
+        final String[] result = {
+                OutputUtils.Line(String.format("Reading from Topic: %s", topic))
+                        + OutputUtils.Line("Data:")
+        };
         try {
             Boolean hasMessages = false;
             do {
